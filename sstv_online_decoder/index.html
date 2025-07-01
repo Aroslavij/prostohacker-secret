@@ -14,32 +14,86 @@
       align-items: center;
       height: 100vh;
       font-size: 1.2em;
+      flex-direction: column;
+    }
+
+    #terminal {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      background-color: #0f0;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+      margin: 5px 0;
+    }
+
+    .button:hover {
+      background-color: #0c0;
     }
   </style>
 </head>
 <body>
-  <div id="status">Ожидание сигнала...</div>
-  <button id="playButton">Начать воспроизведение</button>
+  <div id="terminal"></div>
+  <button id="playButton" class="button">Начать воспроизведение</button>
+  <button id="stopButton" class="button">Остановить воспроизведение</button>
 
   <audio id="sstvAudio" src="final_transmission.wav" preload="auto"></audio>
 
   <script>
     const audio = document.getElementById("sstvAudio");
-    const statusDiv = document.getElementById("status");
+    const terminal = document.getElementById("terminal");
     const playButton = document.getElementById("playButton");
+    const stopButton = document.getElementById("stopButton");
+
+    const text = `[system] Запуск...\n[prostohacker.secret] Готов к приёму.`;
+    let i = 0;
+
+    function typeWriter() {
+      if (i < text.length) {
+        terminal.textContent += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, 50);
+      } else {
+        // После завершения печати текста, можно запустить воспроизведение аудио через 1 секунду
+        setTimeout(() => {
+          statusDiv.textContent = "Сигнал найден. Воспроизведение начнётся через 1 секунду.";
+          setTimeout(startPlayback, 1000); // Через 1 секунду после поиска
+        }, 1000);
+      }
+    }
 
     function startPlayback() {
       statusDiv.textContent = "Сигнал начат...";
       audio.currentTime = 0;
-      audio.play();
+      audio.play().then(() => {
+        // Воспроизведение успешно началось
+      }).catch(error => {
+        console.error('Ошибка при воспроизведении:', error);
+      });
+    }
+
+    function stopPlayback() {
+      statusDiv.textContent = "Сигнал остановлен...";
+      audio.pause();
     }
 
     playButton.addEventListener("click", startPlayback);
+    stopButton.addEventListener("click", stopPlayback);
 
     audio.addEventListener("ended", () => {
       statusDiv.textContent = "Сигнал завершён. Ожидание...";
       setTimeout(startPlayback, 5000); // Пауза перед повтором
     });
+
+    // Запуск эффекта печатной машинки
+    typeWriter();
   </script>
 </body>
 </html>
