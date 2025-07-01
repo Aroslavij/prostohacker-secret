@@ -20,6 +20,12 @@
     #terminal {
       text-align: center;
       margin-bottom: 20px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    #terminal.visible {
+      opacity: 1;
     }
 
     .button {
@@ -52,25 +58,56 @@
     const playButton = document.getElementById("playButton");
     const stopButton = document.getElementById("stopButton");
 
-    const text = `[system] Запуск...\n[prostohacker.secret] Готов к приёму.`;
-    let i = 0;
+    const messages = [
+      "[system] Запуск...",
+      "[prostohacker.secret] Готов к приёму.",
+      "Сигнал найден. Воспроизведение начнётся через 1 секунду.",
+      "Сигнал начат...",
+      "Сигнал остановлен...",
+      "Сигнал завершён. Ожидание..."
+    ];
+
+    let currentMessageIndex = 0;
+    let isTyping = false;
+
+    function updateTerminal(message) {
+      terminal.classList.remove('visible');
+      setTimeout(() => {
+        terminal.textContent = message;
+        terminal.classList.add('visible');
+      }, 500); // Задержка для анимации исчезновения
+    }
 
     function typeWriter() {
-      if (i < text.length) {
-        terminal.textContent += text.charAt(i);
-        i++;
-        setTimeout(typeWriter, 50);
-      } else {
-        // После завершения печати текста, можно запустить воспроизведение аудио через 1 секунду
-        setTimeout(() => {
-          terminal.textContent += "\nСигнал найден. Воспроизведение начнётся через 1 секунду.";
-          setTimeout(startPlayback, 1000); // Через 1 секунду после поиска
-        }, 1000);
+      if (currentMessageIndex >= messages.length) return;
+
+      const message = messages[currentMessageIndex];
+      let i = 0;
+
+      function type() {
+        if (i < message.length) {
+          terminal.textContent += message.charAt(i);
+          i++;
+          setTimeout(type, 50);
+        } else {
+          isTyping = false;
+          if (currentMessageIndex === 1) { // После второго сообщения
+            setTimeout(() => {
+              currentMessageIndex++;
+              updateTerminal(messages[currentMessageIndex]);
+              setTimeout(startPlayback, 1000); // Через 1 секунду после поиска
+            }, 1000);
+          }
+        }
       }
+
+      isTyping = true;
+      type();
     }
 
     function startPlayback() {
-      terminal.textContent += "\nСигнал начат...";
+      currentMessageIndex++;
+      updateTerminal(messages[currentMessageIndex]);
       audio.currentTime = 0;
       audio.play().then(() => {
         // Воспроизведение успешно началось
@@ -81,16 +118,31 @@
     }
 
     function stopPlayback() {
-      terminal.textContent += "\nСигнал остановлен...";
+      currentMessageIndex++;
+      updateTerminal(messages[currentMessageIndex]);
       audio.pause();
       console.log("Аудио остановлено");
     }
 
-    playButton.addEventListener("click", startPlayback);
-    stopButton.addEventListener("click", stopPlayback);
+    playButton.addEventListener("click", () => {
+      if (!isTyping && currentMessageIndex < messages.length) {
+        currentMessageIndex++;
+        updateTerminal(messages[currentMessageIndex]);
+        startPlayback();
+      }
+    });
+
+    stopButton.addEventListener("click", () => {
+      if (!isTyping && currentMessageIndex < messages.length) {
+        currentMessageIndex++;
+        updateTerminal(messages[currentMessageIndex]);
+        stopPlayback();
+      }
+    });
 
     audio.addEventListener("ended", () => {
-      terminal.textContent += "\nСигнал завершён. Ожидание...";
+      currentMessageIndex++;
+      updateTerminal(messages[currentMessageIndex]);
       setTimeout(startPlayback, 5000); // Пауза перед повтором
     });
 
