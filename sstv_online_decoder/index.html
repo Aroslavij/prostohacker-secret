@@ -63,32 +63,34 @@
       } else {
         // После завершения печати текста, можно запустить воспроизведение аудио через 1 секунду
         setTimeout(() => {
-          statusDiv.textContent = "Сигнал найден. Воспроизведение начнётся через 1 секунду.";
+          terminal.textContent += "\nСигнал найден. Воспроизведение начнётся через 1 секунду.";
           setTimeout(startPlayback, 1000); // Через 1 секунду после поиска
         }, 1000);
       }
     }
 
     function startPlayback() {
-      statusDiv.textContent = "Сигнал начат...";
+      terminal.textContent += "\nСигнал начат...";
       audio.currentTime = 0;
       audio.play().then(() => {
         // Воспроизведение успешно началось
+        console.log("Аудио успешно началось");
       }).catch(error => {
         console.error('Ошибка при воспроизведении:', error);
       });
     }
 
     function stopPlayback() {
-      statusDiv.textContent = "Сигнал остановлен...";
+      terminal.textContent += "\nСигнал остановлен...";
       audio.pause();
+      console.log("Аудио остановлено");
     }
 
     playButton.addEventListener("click", startPlayback);
     stopButton.addEventListener("click", stopPlayback);
 
     audio.addEventListener("ended", () => {
-      statusDiv.textContent = "Сигнал завершён. Ожидание...";
+      terminal.textContent += "\nСигнал завершён. Ожидание...";
       setTimeout(startPlayback, 5000); // Пауза перед повтором
     });
 
