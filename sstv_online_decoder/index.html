@@ -19,12 +19,14 @@
 </head>
 <body>
   <div id="status">Ожидание сигнала...</div>
+  <button id="playButton">Начать воспроизведение</button>
 
   <audio id="sstvAudio" src="final_transmission.wav" preload="auto"></audio>
 
   <script>
     const audio = document.getElementById("sstvAudio");
     const statusDiv = document.getElementById("status");
+    const playButton = document.getElementById("playButton");
 
     function startPlayback() {
       statusDiv.textContent = "Сигнал начат...";
@@ -32,13 +34,8 @@
       audio.play();
     }
 
-    // Подготовка: запуск через 5 секунд после загрузки
-    setTimeout(() => {
-      statusDiv.textContent = "Сигнал найден. Воспроизведение начнётся через 1 секунду.";
-      setTimeout(startPlayback, 1000); // Через 1 секунду после поиска
-    }, 5000);
+    playButton.addEventListener("click", startPlayback);
 
-    // Повтор после окончания
     audio.addEventListener("ended", () => {
       statusDiv.textContent = "Сигнал завершён. Ожидание...";
       setTimeout(startPlayback, 5000); // Пауза перед повтором
