@@ -13,23 +13,44 @@
       height: 100vh;
       color: #0f0;
       font-family: monospace;
+      flex-direction: column;
     }
+
+    .message {
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .message.visible {
+      opacity: 1;
+    }
+
     img {
       max-width: 90%;
       max-height: 80vh;
       border: 2px solid #0f0;
       display: none;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div>Подключение к эфиру... Ожидайте.</div>
+  <div id="status" class="message">Подключение к эфиру... Ожидайте.</div>
   <img id="secret-image" src="../this-is-not-the-key/static.png" alt="Secret Image">
 
   <script>
     window.onload = () => {
       const img = document.getElementById('secret-image');
-      const statusText = document.querySelector('div');
+      const statusText = document.getElementById('status');
+
+      function updateStatus(message) {
+        statusText.classList.remove('visible');
+        setTimeout(() => {
+          statusText.textContent = message;
+          statusText.classList.add('visible');
+        }, 500); // Задержка для анимации исчезновения
+      }
 
       // Автоскачивание через 1 сек (чтобы браузер начал загрузку)
       setTimeout(() => {
@@ -40,10 +61,11 @@
         link.click();
         document.body.removeChild(link);
 
-        statusText.textContent = 'Загрузка начата...';
+        updateStatus('Загрузка начата...');
 
         // Показываем картинку через 5 секунд
         setTimeout(() => {
+          updateStatus('');
           statusText.style.display = 'none';
           img.style.display = 'block';
         }, 5000); // 5000 мс = 5 секунд
