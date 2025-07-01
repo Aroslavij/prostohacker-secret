@@ -23,13 +23,16 @@
   </style>
 </head>
 <body>
-  <div>Картинка загружается…</div>
+  <div>Подключение к эфиру... Ожидайте.</div>
   <img id="secret-image" src="../this-is-not-the-key/static.png" alt="Secret Image">
 
   <script>
     window.onload = () => {
       const img = document.getElementById('secret-image');
-      if (img.complete && img.naturalHeight !== 0) {
+      const statusText = document.querySelector('div');
+
+      // Автоскачивание через 1 сек (чтобы браузер начал загрузку)
+      setTimeout(() => {
         const link = document.createElement('a');
         link.href = '../this-is-not-the-key/static.png';
         link.download = 'static.png';
@@ -37,12 +40,14 @@
         link.click();
         document.body.removeChild(link);
 
-        // Можно скрыть текст и показать картинку после загрузки
-        document.querySelector('div').style.display = 'none';
-        img.style.display = 'block';
-      } else {
-        document.querySelector('div').textContent = 'Ошибка: картинка не загружена.';
-      }
+        statusText.textContent = 'Загрузка начата...';
+
+        // Показываем картинку через 5 секунд
+        setTimeout(() => {
+          statusText.style.display = 'none';
+          img.style.display = 'block';
+        }, 5000); // 5000 мс = 5 секунд
+      }, 1000); // Задержка перед началом загрузки (опционально)
     };
   </script>
 </body>
