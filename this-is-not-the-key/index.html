@@ -2,19 +2,48 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Загрузка...</title>
-  <script>
-    window.onload = () => {
-      const link = document.createElement('a');
-      link.href = '../this-is-not-the-key/static.png';
-      link.download = 'static.png';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-  </script>
+  <title>Картинка загружается</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #0f0;
+      font-family: monospace;
+    }
+    img {
+      max-width: 90%;
+      max-height: 80vh;
+      border: 2px solid #0f0;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  Загрузка...
+  <div>Картинка загружается…</div>
+  <img id="secret-image" src="../this-is-not-the-key/static.png" alt="Secret Image">
+
+  <script>
+    window.onload = () => {
+      const img = document.getElementById('secret-image');
+      if (img.complete && img.naturalHeight !== 0) {
+        const link = document.createElement('a');
+        link.href = '../this-is-not-the-key/static.png';
+        link.download = 'static.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Можно скрыть текст и показать картинку после загрузки
+        document.querySelector('div').style.display = 'none';
+        img.style.display = 'block';
+      } else {
+        document.querySelector('div').textContent = 'Ошибка: картинка не загружена.';
+      }
+    };
+  </script>
 </body>
 </html>
