@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Слушаем эфир...</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div id="status">Ожидание сигнала...</div>
+
+  <audio id="sstvAudio" src="final_transmission.wav" preload="auto"></audio>
+
+  <script>
+    const audio = document.getElementById("sstvAudio");
+    const statusDiv = document.getElementById("status");
+
+    function startPlayback() {
+      statusDiv.textContent = "Сигнал начат...";
+      audio.currentTime = 0;
+      audio.play();
+    }
+
+    // Подготовка: запуск через 5 секунд после загрузки
+    setTimeout(() => {
+      statusDiv.textContent = "Сигнал найден. Воспроизведение начнётся через 1 секунду.";
+      setTimeout(startPlayback, 1000); // Через 1 секунду после поиска
+    }, 5000);
+
+    // Повтор после окончания
+    audio.addEventListener("ended", () => {
+      statusDiv.textContent = "Сигнал завершён. Ожидание...";
+      setTimeout(startPlayback, 5000); // Пауза перед повтором
+    });
+  </script>
+</body>
+</html>
