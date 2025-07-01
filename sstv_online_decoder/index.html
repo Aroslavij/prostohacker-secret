@@ -125,7 +125,7 @@
     }
 
     playButton.addEventListener("click", () => {
-      if (!isTyping && currentMessageIndex < messages.length) {
+      if (!isTyping && currentMessageIndex < messages.length - 1) {
         currentMessageIndex++;
         updateTerminal(messages[currentMessageIndex]);
         startPlayback();
@@ -133,7 +133,7 @@
     });
 
     stopButton.addEventListener("click", () => {
-      if (!isTyping && currentMessageIndex < messages.length) {
+      if (!isTyping && currentMessageIndex < messages.length - 1) {
         currentMessageIndex++;
         updateTerminal(messages[currentMessageIndex]);
         stopPlayback();
@@ -143,7 +143,10 @@
     audio.addEventListener("ended", () => {
       currentMessageIndex++;
       updateTerminal(messages[currentMessageIndex]);
-      setTimeout(startPlayback, 5000); // Пауза перед повтором
+      setTimeout(() => {
+        currentMessageIndex = 0; // Сбрасываем индекс после завершения последнего сообщения
+        typeWriter(); // Перезапускаем эффект печатной машинки
+      }, 5000); // Пауза перед повтором
     });
 
     // Запуск эффекта печатной машинки
